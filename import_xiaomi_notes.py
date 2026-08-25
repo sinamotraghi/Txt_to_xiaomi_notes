@@ -46,24 +46,7 @@ def connected():
 
     return devices
 
-def send_text_via_share(text):
-    # ACTION_SEND -> Xiaomi Notes. This is the cleanest way if the installed
-    # Xiaomi Notes version accepts shared plain text.
-    #
-    # NOTE: an earlier version of this function pushed the text to the phone
-    # as base64 and decoded it into a temp file on /sdcard before sending the
-    # intent. That temp file was never actually read by anything below - the
-    # intent always used the `text` variable directly - so it was dead code.
-    # It's also what was hanging: "adb shell sh -c '... > /sdcard/...'"
-    # deadlocks on this device. Removed; we just send `text` directly.
-    #
-    # IMPORTANT: adb joins every "adb shell" argument into a single string
-    # and re-parses it with /system/bin/sh on the device. So a `text` value
-    # containing spaces/newlines/quotes gets split into multiple words by
-    # the phone's shell unless we quote it ourselves (Python's own argv
-    # handling on the Windows side doesn't help with this, since it happens
-    # after adb reassembles the command remotely). shlex.quote() wraps the
-    # value in POSIX-safe single quotes.
+def send_text_via_share(text):    
     try:
         quoted_text = shlex.quote(text)
         p = adb("shell", "am", "start",
@@ -113,9 +96,7 @@ def main():
         print(f"Found {len(files)} TXT files.")
         for n, f in enumerate(files, 1):
             raw = f.read_text(encoding="utf-8-sig", errors="replace")
-            title = f.stem.replace("_", " ")
-            # Put title at top; Xiaomi Notes can use it as the first line if
-            # its share receiver doesn't expose a separate title field.
+            title = f.stem.replace("_", " ") 
             payload = title + "\n\n" + raw
             print(f"[{n}/{len(files)}] {f.name}")
             ok = send_text_via_share(payload)

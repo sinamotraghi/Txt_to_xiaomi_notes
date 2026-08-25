@@ -1,5 +1,7 @@
 # Txt_to_xiaomi_notes
+🌐 [فارسی](README.fa.md) | English
 # Samsung Notes → Xiaomi Notes Importer
+
 
 A small Windows/Python script that takes a folder of exported `.txt` notes
 (zipped) and imports them into **Xiaomi Notes** on an Android phone, one by
